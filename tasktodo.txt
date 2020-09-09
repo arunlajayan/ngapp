@@ -1,0 +1,2 @@
+1. Create event after user vote
+2. Clear form when user creates a poll
