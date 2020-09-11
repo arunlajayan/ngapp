@@ -12,7 +12,7 @@ declare var window: any;
 export class Web3Service {
   private web3: Web3;
   private contract: Contract;
-  private contractAddress = "0x217adAc53b258030365192D4b3fC30F4FC21DB45";
+  private contractAddress = "0xeC203a154AE7AAaCCC3b499a728f8477d8E411DA";
 
   constructor(private zone: NgZone) {
     if (window.web3) {
@@ -22,11 +22,9 @@ export class Web3Service {
         this.contractAddress
       );
 
-      window.ethereum.enable().catch((err) => {
-        console.log(err);
-      });
+      window.ethereum.enable().catch((err) => console.error(err));
     } else {
-      console.warn("Metamask not found. Install or enable Metamask.");
+      console.warn("Metamask not found, Install or Enable metamask");
     }
   }
 
@@ -34,22 +32,19 @@ export class Web3Service {
     return this.web3.eth.getAccounts().then((accounts) => accounts[0] || "");
   }
 
-  // executeTransaction("vote", pollId, vote)
-  // executeTransaction("createPoll", question, thumb, opt)
-  async executeTransaction(fnName: string, ...args: any[]): Promise<void> {
-    const acc = await this.getAccount();
-    this.contract.methods[fnName](...args).send({ from: acc, gas: 350000 });
+  async executeTransaction(fnName: string, ...args: any): Promise<void> {
+    const account = await this.getAccount();
+    return this.contract.methods[fnName](...args).send({ from: account });
   }
 
-  async call(fnName: string, ...args: any[]) {
-    const acc = await this.getAccount();
-    return this.contract.methods[fnName](...args).call({from: acc });
+  async call(fnName: string, ...args: any) {
+    const account = await this.getAccount();
+    return this.contract.methods[fnName](...args).call({ from: account });
   }
 
   onEvents(event: string) {
     return new Observable((observer) => {
       this.contract.events[event]().on("data", (data) => {
-        // THIS MUST RUN INSIDE ANGULAR ZONE AS IT'S LISTENING FOR 'ON'
         this.zone.run(() => {
           observer.next({
             event: data.event,

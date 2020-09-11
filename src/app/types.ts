@@ -4,11 +4,6 @@ export interface Poll extends PollForm {
   voted: boolean;
 }
 
-export interface Voter {
-  id: string;
-  voted: number[];
-}
-
 export interface PollForm {
   question: string;
   options: string[];
@@ -18,4 +13,9 @@ export interface PollForm {
 export interface PollVote {
   id: number;
   vote: number;
+}
+
+export interface Voter {
+  id: string;
+  voted: number[];
 }
